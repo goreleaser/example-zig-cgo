@@ -17,20 +17,23 @@ builds:
       - -s -w
     flags:
       - -trimpath
-      - -buildmode=pie
     env:
       - CGO_ENABLED=1
+      - SDKROOT={{ .Env.SDK_PATH }}
+      - MACOSX_DEPLOYMENT_TARGET=11.0
+      - CGO_CFLAGS=-isysroot {{ .Env.SDK_PATH }} -mmacosx-version-min=11.0
+      - CGO_CXXFLAGS=-isysroot {{ .Env.SDK_PATH }} -mmacosx-version-min=11.0
+      - CGO_LDFLAGS=-isysroot {{ .Env.SDK_PATH }}
       - >-
         {{- if eq .Os "darwin" }}
-          {{- if eq .Arch "amd64"}}CC=zig c -target x86_64-macos-none -F{{ .Env.SDK_PATH }}/System/Library/Frameworks{{- end }}
-          {{- if eq .Arch "arm64"}}CC=zig c -target aarch64-macos-none -F{{ .Env.SDK_PATH }}/System/Library/Frameworks{{- end }}
+          {{- if eq .Arch "amd64"}}CC=clang -arch x86_64 -isysroot {{ .Env.SDK_PATH }}{{- end }}
+          {{- if eq .Arch "arm64"}}CC=clang -arch arm64 -isysroot {{ .Env.SDK_PATH }}{{- end }}
         {{- end }}
       - >-
         {{- if eq .Os "darwin" }}
-          {{- if eq .Arch "amd64"}}CC=zig c++ -target x86_64-macos-none -F{{ .Env.SDK_PATH }}/System/Library/Frameworks{{- end }}
-          {{- if eq .Arch "arm64"}}CC=zig c++ -target aarch64-macos-none -F{{ .Env.SDK_PATH }}/System/Library/Frameworks{{- end }}
+          {{- if eq .Arch "amd64"}}CXX=clang++ -arch x86_64 -isysroot {{ .Env.SDK_PATH }}{{- end }}
+          {{- if eq .Arch "arm64"}}CXX=clang++ -arch arm64 -isysroot {{ .Env.SDK_PATH }}{{- end }}
         {{- end }}
-
   - id: goreleaser-zig-cross-compilation-linux
     goos:
       - linux
@@ -41,19 +44,19 @@ builds:
       - -s -w
     flags:
       - -trimpath
+      - -buildmode=pie
     env:
       - CGO_ENABLED=1
       - >-
         {{- if eq .Os "linux" }}
-          {{- if eq .Arch "amd64" }}CC=zig c -target x86_64-linux-musl{{- end }}
-          {{- if eq .Arch "arm64"}}CC=zig c -target aarch64-linux-musl{{- end }}
+          {{- if eq .Arch "amd64" }}CC=zig cc -target x86_64-linux-musl -lc{{- end }}
+          {{- if eq .Arch "arm64"}}CC=zig cc -target aarch64-linux-musl -lc{{- end }}
         {{- end }}
       - >-
         {{- if eq .Os "linux" }}
-          {{- if eq .Arch "amd64" }}CC=zig c++ -target x86_64-linux-musl{{- end }}
-          {{- if eq .Arch "arm64"}}CC=zig c++ -target aarch64-linux-musl{{- end }}
+          {{- if eq .Arch "amd64" }}CXX=zig c++ -target x86_64-linux-musl -lc{{- end }}
+          {{- if eq .Arch "arm64"}}CXX=zig c++ -target aarch64-linux-musl -lc{{- end }}
         {{- end }}
-
   - id: goreleaser-zig-cross-compilation-windows
     goos:
       - windows
@@ -68,13 +71,13 @@ builds:
       - CGO_ENABLED=1
       - >-
         {{- if eq .Os "windows" }}
-          {{- if eq .Arch "amd64" }}CC=zig c -target x86_64-windows-gnu{{- end }}
-          {{- if eq .Arch "arm64"}}CC=zig c -target aarch64-windows-gnu{{- end }}
+          {{- if eq .Arch "amd64" }}CC=zig cc -target x86_64-windows-gnu -lc{{- end }}
+          {{- if eq .Arch "arm64"}}CC=zig cc -target aarch64-windows-gnu -lc{{- end }}
         {{- end }}
       - >-
         {{- if eq .Os "windows" }}
-          {{- if eq .Arch "amd64" }}CC=zig c++ -target x86_64-windows-gnu{{- end }}
-          {{- if eq .Arch "arm64"}}CC=zig c++ -target aarch64-windows-gnu{{- end }}
+          {{- if eq .Arch "amd64" }}CXX=zig c++ -target x86_64-windows-gnu -lc{{- end }}
+          {{- if eq .Arch "arm64"}}CXX=zig c++ -target aarch64-windows-gnu -lc{{- end }}
         {{- end }}
 
 archives:
