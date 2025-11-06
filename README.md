@@ -21,13 +21,27 @@ Zig is a full-fledged C/C++ cross-compiler that leverages LLVM. The crucial deta
 
 When cross-compiling Zig code, you can use the zig cc and zig c++ commands to compile C and C++ code, respectively. These commands are wrappers around the appropriate compiler for the target platform, and they handle passing the correct flags and options to the underlying compiler.
 
-If you want to cross-compile for x86_64 Linux, for example, all you need to do is add
+If you want to cross-compile for `x86_64` Linux, for example, all you need to do is add:
 
-* CC="zig cc -target x86_64-linux"
-* CXX="zig c++ -target x86_64-linux
+* `CC="zig cc -target x86_64-linux"`
+* `CXX="zig c++ -target x86_64-linux"`
 
-to the list of env variables when invoking go build. In the case of Hugo, this is the complete command line:
+To the list of env variables when invoking `go build`. Example:
 
 ```shell
 CGO_ENABLED=1 GOOS=linux GOARCH=amd64 CC="zig cc -target x86_64-linux" CXX="zig c++ -target x86_64-linux" go build
+```
+
+## Local builds (macOS)
+
+Set SDK_PATH when building locally for darwin targets:
+
+```shell
+SDK_PATH=$(xcrun --show-sdk-path) goreleaser release --clean --snapshot
+```
+
+Or with go build:
+
+```shell
+SDK_PATH=$(xcrun --show-sdk-path) CGO_ENABLED=1 GOOS=darwin GOARCH=arm64 CC="clang -arch arm64 -isysroot $SDK_PATH" CXX="clang++ -arch arm64 -isysroot $SDK_PATH" go build
 ```
