@@ -1,3 +1,4 @@
+# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 project_name: goreleaser-zig-cross-compilation
 # This is an example .goreleaser.yml file with some sensible defaults.
 # Make sure to check the documentation at https://goreleaser.com
@@ -8,46 +9,46 @@ before:
 builds:
   - id: goreleaser-zig-cross-compilation-linux-macos
     goos:
-    - darwin
+      - darwin
     goarch:
-    - amd64
-    - arm64
+      - amd64
+      - arm64
     ldflags:
-    - -s -w
+      - -s -w
     flags:
-    - -trimpath
-    - -buildmode=pie
+      - -trimpath
+      - -buildmode=pie
     env:
-    - CGO_ENABLED=1
-    - >-
+      - CGO_ENABLED=1
+      - >-
         {{- if eq .Os "darwin" }}
           {{- if eq .Arch "amd64"}}CC=zig c -target x86_64-macos-none -F{{ .Env.SDK_PATH }}/System/Library/Frameworks{{- end }}
           {{- if eq .Arch "arm64"}}CC=zig c -target aarch64-macos-none -F{{ .Env.SDK_PATH }}/System/Library/Frameworks{{- end }}
         {{- end }}
-    - >-
+      - >-
         {{- if eq .Os "darwin" }}
           {{- if eq .Arch "amd64"}}CC=zig c++ -target x86_64-macos-none -F{{ .Env.SDK_PATH }}/System/Library/Frameworks{{- end }}
           {{- if eq .Arch "arm64"}}CC=zig c++ -target aarch64-macos-none -F{{ .Env.SDK_PATH }}/System/Library/Frameworks{{- end }}
         {{- end }}
-  
+
   - id: goreleaser-zig-cross-compilation-linux
     goos:
-    - linux
+      - linux
     goarch:
-    - amd64
-    - arm64
+      - amd64
+      - arm64
     ldflags:
-    - -s -w
+      - -s -w
     flags:
-    - -trimpath
+      - -trimpath
     env:
-    - CGO_ENABLED=1
-    - >-
+      - CGO_ENABLED=1
+      - >-
         {{- if eq .Os "linux" }}
           {{- if eq .Arch "amd64" }}CC=zig c -target x86_64-linux-musl{{- end }}
           {{- if eq .Arch "arm64"}}CC=zig c -target aarch64-linux-musl{{- end }}
         {{- end }}
-    - >-
+      - >-
         {{- if eq .Os "linux" }}
           {{- if eq .Arch "amd64" }}CC=zig c++ -target x86_64-linux-musl{{- end }}
           {{- if eq .Arch "arm64"}}CC=zig c++ -target aarch64-linux-musl{{- end }}
@@ -55,29 +56,30 @@ builds:
 
   - id: goreleaser-zig-cross-compilation-windows
     goos:
-    - windows
+      - windows
     goarch:
-    - amd64
-    - arm64
+      - amd64
+      - arm64
     ldflags:
-    - -s -w
+      - -s -w
     flags:
-    - -trimpath
+      - -trimpath
     env:
-    - CGO_ENABLED=1
-    - >-
+      - CGO_ENABLED=1
+      - >-
         {{- if eq .Os "windows" }}
           {{- if eq .Arch "amd64" }}CC=zig c -target x86_64-windows-gnu{{- end }}
           {{- if eq .Arch "arm64"}}CC=zig c -target aarch64-windows-gnu{{- end }}
         {{- end }}
-    - >-
+      - >-
         {{- if eq .Os "windows" }}
           {{- if eq .Arch "amd64" }}CC=zig c++ -target x86_64-windows-gnu{{- end }}
           {{- if eq .Arch "arm64"}}CC=zig c++ -target aarch64-windows-gnu{{- end }}
         {{- end }}
 
 archives:
-  - format: tar.gz
+  - formats:
+      - tar.gz
     # this name template makes the OS and Arch compatible with the results of uname.
     name_template: >-
       {{ .ProjectName }}_
@@ -88,20 +90,16 @@ archives:
       {{- if .Arm }}v{{ .Arm }}{{ end }}
     # use zip for windows archives
     format_overrides:
-    - goos: windows
-      format: zip
+      - goos: windows
+        formats:
+          - zip
 checksum:
-  name_template: 'checksums.txt'
+  name_template: "checksums.txt"
 snapshot:
-  name_template: "{{ incpatch .Version }}-next"
+  version_template: "{{ incpatch .Version }}-next"
 changelog:
   sort: asc
   filters:
     exclude:
-      - '^docs:'
-      - '^test:'
-
-# The lines beneath this are called `modelines`. See `:help modeline`
-# Feel free to remove those if you don't want/use them.
-# yaml-language-server: $schema=https://goreleaser.com/static/schema.json
-# vim: set ts=2 sw=2 tw=0 fo=cnqoj
+      - "^docs:"
+      - "^test:"
