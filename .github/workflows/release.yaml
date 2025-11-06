@@ -15,11 +15,10 @@ jobs:
     steps:
       - uses: actions/checkout@f43a0e5ff2bd294095638e18286ca9a3d1956744 # v3.6.0
         with:
-          fetch-depth: 0 # this is important, otherwise it won't checkout the full tree (i.e. no previous tags)
+          fetch-depth: 0
       - uses: actions/setup-go@be3c94b385c4f180051c996d336f57a34c397495 # v3.6.1
         with:
-          go-version: 1.19
-          cache: true
+          go-version-file: go.mod
       - uses: goto-bus-stop/setup-zig@abea47f85e598557f500fa1fd2ab7464fcb39406 # v2.2.1
       - name: Set output
         id: macos_sdk
